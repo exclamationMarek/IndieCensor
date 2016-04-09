@@ -5,14 +5,14 @@ Brought to you by /u/exclamationMarek
 Visit reddit.com/r/shittyKickstarters!
 
 
-Pre-requisites:
+# Pre-requisites:
 -Python 2.7
 -Python Image Library PIL or Pillow for rendering the comments to a png file
 	(easily installable in binary form, ex. apt-get install python-imaging)
 -Tweepy for tweeting. Can be omitted if you just want to run locally
 
 
-File structure:
+# File structure:
 /indieCensor.py - main script
 /comments.json - local copy of the comments. Will be automatically created if not found
 /Roboto-bold.ttf and Roboto-regular.ttf - fonts for rendering the comment in .png
@@ -21,7 +21,7 @@ File structure:
 /renders/ - folder to store the rendered comment images
 /backups/ - folder to store backups of the comments.json file, one backup every 12h
 
-Operating principle:
+# Operating principle:
 The bot refreshes the comment section of the campaign website, by requesting this address:
 https://www.indiegogo.com/private_api/campaigns/triton-world-s-first-artificial-gills-re-breather/comments/ (this example is for the triton campaign). This endpoint returns a json file containing:
 int count - number of returned comments
@@ -39,8 +39,14 @@ Every time the URL is fetched, we compare the IDs of the retrieved comments with
 
 Note that the bot ignores comment replies. Upon some observation it was noted that Indiegogo users seldom use the "reply to comment" feature to raise questions about the validity of a campaign. The campaign owner, in contrast, often replies to comments with what is often simply "more bullshit" therefore this content is omitted by the bot entirely.
 
+# Usage
+It's recommended to have the script running in the background, like so:
+nohup python indieCensor.py&
 
-License and stuff
+For debuging, it's recommended to use the interactive mode. This will disable periodic sniffing
+python -i indieCensor.py
+
+# License and stuff
 This is an open source project, under GPL 4.0.
 
 The "Roboto" font is  property of Google inc. and Google inc. is awesome.
