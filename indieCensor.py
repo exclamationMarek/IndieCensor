@@ -2,22 +2,25 @@ import urllib2, urllib, cStringIO
 import json
 from datetime import datetime, timedelta
 import time, threading
-import sys
+import sys, os
 from random import randint
-from PIL import Image, ImageFont, ImageDraw 
 
-
-#indiegogo comment API endpoint
+#indiegogo comment API endpoint. Pick one.
 commentsURL = 'https://www.indiegogo.com/private_api/campaigns/triton-world-s-first-artificial-gills-re-breather/comments'
+#commentsURL = 'https://www.indiegogo.com/private_api/campaigns/the-skarp-laser-razor-21st-century-shaving/comments/'
+
 #user agent to send in request. Please replace with your own
 legitAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/7046A194A'
 saveFileName = 'comments.json'
 
 #screenshot rendering
-font = ImageFont.truetype("Roboto-Regular.ttf", 50)
-fontBold = ImageFont.truetype("Roboto-Bold.ttf", 50)
-cutout = Image.open("cutout.png")
-stamp = Image.open("stamp.png")
+screenshotRenderingActive = False
+if screenshotRenderingActive:
+	from PIL import Image, ImageFont, ImageDraw 
+	font = ImageFont.truetype("Roboto-Regular.ttf", 50)
+	fontBold = ImageFont.truetype("Roboto-Bold.ttf", 50)
+	cutout = Image.open("cutout.png")
+	stamp = Image.open("stamp.png")
 
 #twitter
 twitterActive = False
@@ -30,6 +33,11 @@ if twitterActive:
 	auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 	auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 	twitter = tweepy.API(auth)
+
+def selfCheck():
+	for directory in ['renders', 'backups', 'dumpedComments']:
+		if not os.path.exists(directory):
+			os.makedirs(directory)
 
 def readFile(fileName):
 	global tc
@@ -101,6 +109,16 @@ def renderScreenshot(comment):
 	out.save(renderFileName)
 	return renderFileName
 
+#used when we DO NOT render screenshots, and instead want text files with the deleted comments
+def saveCommentToTextFile(comment):
+	filePath = 'dumpedComments/' + str(comment['id']) + '.txt'
+	with open (filePath, 'w') as outfile:
+		outfile.write(comment['account_name'])
+		outfile.write('\n')
+		outfile.write(comment['comment'])
+		outfile.write('\n')
+		outfile.write('---- DELETED ----')
+
 def processNew(comment):
 	global tc
 	comment['deleted'] = False
@@ -118,7 +136,10 @@ def processNewlyDeleted(comment):
 	print timestamp + " found newly deleted comment!!!\n"
 	print comment['comment']
 	saveFile(saveFileName)
-	screenshot = renderScreenshot(comment)
+	if screenshotRenderingActive:
+		screenshot = renderScreenshot(comment)
+	else:
+		saveCommentToTextFile(comment)
 	if twitterActive:
 		twitter.update_with_media(screenshot, "Just deleted this")
 
@@ -156,7 +177,7 @@ def autoSave():
 	if not sys.flags.interactive:
 		threading.Timer(43200, autoSave).start()
 
-
+selfCheck()
 readFile(saveFileName)
 #if the script was started with the '-i' flag for interactive, we dont want it to sniff automaticaly
 #this is a good way to debug the script or analyze information in the saved comments
