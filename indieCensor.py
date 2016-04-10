@@ -89,7 +89,7 @@ def renderScreenshot(comment):
 			#too long, print and carry!
 			draw.text((250, ypos), line, (11,11,11), font=font)
 			ypos += 64
-			line = word + "."
+			line = word + " "
 		else:
 			line = temp
 	draw.text((250, ypos), line, (11,11,11), font=font)
