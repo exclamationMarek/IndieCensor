@@ -6,20 +6,20 @@ Visit reddit.com/r/shittyKickstarters!
 
 
 # Pre-requisites:
--Python 2.7
--Python Image Library PIL or Pillow for rendering the comments to a png file
-	(easily installable in binary form, ex. apt-get install python-imaging)
--Tweepy for tweeting. Can be omitted if you just want to run locally
+- Python 2.7
+- (optional) Python Image Library PIL or Pillow for rendering the comments to a png file
+- (optional) Tweepy for tweeting, although requires the above.
 
 
 # File structure:
-/indieCensor.py - main script
-/comments.json - local copy of the comments. Will be automatically created if not found
-/Roboto-bold.ttf and Roboto-regular.ttf - fonts for rendering the comment in .png
-/cutout.png - a template to render the Indiegogo profile picture of the commenter properly
-/stamp.png - image of the stamp that is superimposed on the rendered comment (note the transparent background!)
-/renders/ - folder to store the rendered comment images
-/backups/ - folder to store backups of the comments.json file, one backup every 12h
+- /indieCensor.py - main script
+- /comments.json - local copy of the comments. Will be automatically created if not found
+- /Roboto-bold.ttf and Roboto-regular.ttf - fonts for rendering the comment in .png
+- /cutout.png - a template to render the Indiegogo profile picture of the commenter properly
+- /stamp.png - image of the stamp that is superimposed on the rendered comment (note the transparent background!)
+- /backups/ - folder to store backups of the comments.json file, one backup every 12h
+- /renders/ - folder to store the rendered comment images, if image rendering is ENABLED
+- /dumpedComments/ - folder to store the deleted comments in separate text files, if image rendering is DISABLED
 
 # Operating principle:
 The bot refreshes the comment section of the campaign website, by requesting this address:
