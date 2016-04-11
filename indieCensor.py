@@ -53,6 +53,11 @@ def saveFile(fileName):
 	with open(fileName, 'w') as outfile:
 		json.dump(tc, outfile)
 
+def log(message):
+	timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	message = str(message)
+	print timestamp + " " + message
+
 def getCommentFromList(id, cList):
 	for p in cList:
 		if p['id'] == int(id):
@@ -122,19 +127,17 @@ def saveCommentToTextFile(comment):
 def processNew(comment):
 	global tc
 	comment['deleted'] = False
-	timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
-	comment['date_added'] = timestamp
+	comment['date_added'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
 	tc.append(comment)
-	print timestamp + " new comment found!\n"
+	log(" new comment found!")
 	saveFile(saveFileName)	
 
 def processNewlyDeleted(comment):
 	global tc
 	comment['deleted'] = True
-	timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
-	comment['date_deleted'] = timestamp
-	print timestamp + " found newly deleted comment!!!\n"
-	print comment['comment']
+	comment['date_deleted'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+	log("found newly deleted comment!!!\n")
+	print comment['comment'].encode('utf-8', 'ignore')
 	saveFile(saveFileName)
 	if screenshotRenderingActive:
 		screenshot = renderScreenshot(comment)
@@ -144,7 +147,7 @@ def processNewlyDeleted(comment):
 		twitter.update_with_media(screenshot, "Just deleted this")
 
 def sniff():
-	print "sniffing!\n"
+	log("Fetching!")
 	global tc
 	official = fetchComments()
 	if official != False:
